@@ -1,11 +1,11 @@
-/* SOS TAG NFC — estilo compartido de todas las páginas */
+/* SOS TAG NFC — estilo compartido de todas las páginas (verde confianza, rojo solo para emergencias) */
 body{font-family:Inter,system-ui,sans-serif}
 
 .bg-app{
   background:
-    radial-gradient(1100px 620px at 8% -8%,#7c3aed 0%,transparent 60%),
-    radial-gradient(900px 520px at 105% 8%,#2563eb 0%,transparent 55%),
-    linear-gradient(170deg,#1e1b4b 0%,#312e81 42%,#1e3a8a 100%);
+    radial-gradient(1000px 600px at 8% -10%,#059669 0%,transparent 60%),
+    radial-gradient(900px 520px at 105% 10%,#0d9488 0%,transparent 55%),
+    linear-gradient(170deg,#022c22 0%,#064e3b 45%,#042f2e 100%);
 }
 
 .glass{
@@ -23,7 +23,7 @@ body{font-family:Inter,system-ui,sans-serif}
   transition:box-shadow .2s ease,border-color .2s ease,background-color .2s ease;
 }
 .field::placeholder{color:rgba(255,255,255,.4)}
-.field:focus{border-color:#fb7185;box-shadow:0 0 0 3px rgba(251,113,133,.35);background:rgba(255,255,255,.12)}
+.field:focus{border-color:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.35);background:rgba(255,255,255,.12)}
 .field option{color:#0f172a}
 .label{display:block;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.75);margin-bottom:.35rem}
 
@@ -36,10 +36,10 @@ body{font-family:Inter,system-ui,sans-serif}
 @keyframes ring{0%{transform:scale(.7);opacity:.8}100%{transform:scale(2.4);opacity:0}}
 
 .card-hover{transition:transform .35s ease,box-shadow .35s ease,background-color .35s ease}
-.card-hover:hover{transform:translateY(-6px);box-shadow:0 30px 60px -20px rgba(124,58,237,.55);background:rgba(255,255,255,.11)}
+.card-hover:hover{transform:translateY(-6px);box-shadow:0 30px 60px -20px rgba(16,185,129,.45);background:rgba(255,255,255,.11)}
 
 .btn-cta{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
-.btn-cta:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 18px 35px -10px rgba(251,113,133,.7);filter:brightness(1.08)}
+.btn-cta:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 18px 35px -10px rgba(16,185,129,.6);filter:brightness(1.08)}
 .btn-cta:disabled{opacity:.6;transform:none;filter:none;cursor:not-allowed}
 .btn-ghost{transition:transform .2s ease,background-color .2s ease}
 .btn-ghost:hover{transform:translateY(-2px);background:rgba(255,255,255,.16)}
