@@ -97,11 +97,12 @@ async function alerta(req, res) {
 
   const lat = +b.lat, lon = +b.lon, acc = +b.acc;
   const hasLoc = b.lat != null && b.lon != null && Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
-  const loc = hasLoc
-    ? `Ubicación: https://maps.google.com/?q=${lat.toFixed(5)},${lon.toFixed(5)}${Number.isFinite(acc) ? ` (±${Math.round(acc)} m)` : ''}`
-    : 'Ubicación no disponible (el tag fue escaneado sin permiso de GPS).';
+  const lugar = hasLoc
+    ? `Su tag fue escaneado en este lugar:\nhttps://maps.google.com/?q=${lat.toFixed(5)},${lon.toFixed(5)}${Number.isFinite(acc) ? ` (precisión ±${Math.round(acc)} m)` : ''}`
+    : 'Su tag fue escaneado, pero no se pudo obtener la ubicación.';
   const hora = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' });
-  const text = `🚨 SOS TAG: ${p.name} fue escaneada tras un posible percance (${hora}). ${loc} Tipo ${p.blood}${p.allergies.length ? ', alergias: ' + p.allergies.join(', ') : ''}.`;
+  const alergias = p.allergies.length ? `\nAlergias: ${p.allergies.join(', ')}.` : '';
+  const text = `AYUDA - SOS TAG\n${p.name} podría necesitar ayuda.\n${lugar}\nHora: ${hora}\nTipo de sangre: ${p.blood}.${alergias}\nSi no puedes comunicarte con ella, llama al 911.`;
 
   // La ficha demo nunca manda SMS reales, aunque Twilio esté configurado.
   const live = !DEMO[id] && process.env.TWILIO_SID && process.env.TWILIO_TOKEN && process.env.TWILIO_SMS_FROM;

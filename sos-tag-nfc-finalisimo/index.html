@@ -1,303 +1,406 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SOS TAG NFC — Ficha médica de emergencia con ubicación</title>
-<meta name="description" content="Tag NFC/QR con ficha médica de emergencia. Quien auxilia escanea, ve la información y se envía la ubicación a tus contactos. Sin apps, sin registro.">
+<title>SOS TAG NFC — Crea tu ficha de emergencia</title>
+<meta name="description" content="Crea tu ficha médica de emergencia en minutos. Graba tu tag NFC o imprime tu QR. Quien te auxilie ve tus datos y tus contactos reciben tu ubicación.">
 <meta property="og:title" content="SOS TAG NFC">
-<meta property="og:description" content="Escanea. Ve la ficha médica. Avisa con tu ubicación. Sin apps, sin registro.">
+<meta property="og:description" content="Crea tu ficha de emergencia en minutos. Sin apps para quien auxilia.">
 <meta property="og:image" content="assets/ficha-medica.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚑</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  body{font-family:Inter,system-ui,sans-serif}
-  .glass{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 25px 60px -25px rgba(0,0,0,.5)}
-  .bg-app{background:radial-gradient(1100px 620px at 8% -8%,#7c3aed 0%,transparent 60%),radial-gradient(900px 520px at 105% 8%,#2563eb 0%,transparent 55%),linear-gradient(170deg,#1e1b4b 0%,#312e81 42%,#1e3a8a 100%)}
-  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
-  .reveal.show{opacity:1;transform:none}
-  .float{animation:float 6s ease-in-out infinite}
-  @keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-14px) rotate(1deg)}}
-  .ring{animation:ring 1.8s ease-out infinite}
-  @keyframes ring{0%{transform:scale(.7);opacity:.8}100%{transform:scale(2.4);opacity:0}}
-  .card-hover{transition:transform .35s ease,box-shadow .35s ease,background-color .35s ease}
-  .card-hover:hover{transform:translateY(-6px);box-shadow:0 30px 60px -20px rgba(124,58,237,.55);background:rgba(255,255,255,.11)}
-  .btn-cta{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
-  .btn-cta:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 18px 35px -10px rgba(251,113,133,.7);filter:brightness(1.08)}
-  .btn-ghost:hover{transform:translateY(-2px);background:rgba(255,255,255,.14)}
-  .grid-map{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px}
-  @media (prefers-reduced-motion:reduce){.float,.ring{animation:none}.reveal{transition:none;opacity:1;transform:none}}
-</style>
+<link rel="stylesheet" href="theme.css">
 </head>
-<body class="bg-app min-h-screen text-white antialiased overflow-x-hidden">
+<body class="bg-app min-h-screen text-white antialiased">
 
 <!-- NAV -->
 <header class="sticky top-0 z-30 border-b border-white/10 bg-indigo-950/40 backdrop-blur-xl">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-    <a href="#top" id="top" class="flex items-center gap-2 font-black tracking-wide">
+  <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+    <a href="/" class="flex items-center gap-2 font-black tracking-wide">
       <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-rose-500 to-orange-400 shadow-lg shadow-rose-900/40">🚑</span>
       <span>SOS <span class="text-rose-400">TAG</span> NFC</span>
     </a>
-    <nav class="hidden items-center gap-7 text-sm font-medium text-white/75 md:flex">
-      <a href="#producto" class="transition hover:text-white">Producto</a>
-      <a href="#proceso" class="transition hover:text-white">Proceso</a>
-      <a href="#mercado" class="transition hover:text-white">Mercado</a>
-      <a href="#equipo" class="transition hover:text-white">Equipo</a>
-      <a href="#demo" class="transition hover:text-white">Demo</a>
+    <nav class="flex items-center gap-5 text-sm font-medium text-white/75">
+      <a href="#nfc" class="transition hover:text-white">Escanear NFC</a>
+      <a href="/nosotros.html" class="transition hover:text-white">Nosotros</a>
     </nav>
-    <div class="flex items-center gap-2">
-      <a href="/crear" class="hidden rounded-xl px-3 py-2 text-sm font-semibold text-white/80 transition hover:text-white sm:block">Iniciar sesión</a>
-      <a href="/crear" class="btn-cta rounded-xl bg-gradient-to-r from-rose-500 to-orange-400 px-4 py-2 text-sm font-black shadow-lg shadow-rose-900/40">Crear mi ficha</a>
-    </div>
   </div>
 </header>
 
-<main>
-<!-- HERO -->
-<section class="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-14 lg:grid-cols-2 lg:pt-20">
-  <div class="reveal">
+<main class="mx-auto max-w-2xl px-4 pb-20 pt-10">
+
+  <!-- HERO -->
+  <div class="reveal text-center">
     <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold ring-1 ring-white/20">
-      <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Respuesta rápida en emergencias
+      <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Gratis · Sin tarjeta de crédito
     </span>
-    <h1 class="mt-6 text-4xl font-black leading-[1.08] sm:text-5xl lg:text-6xl">
-      Un escaneo.<br><span class="bg-gradient-to-r from-rose-400 via-orange-300 to-amber-200 bg-clip-text text-transparent">Una vida.</span>
+    <h1 class="mt-5 text-3xl font-black leading-tight sm:text-4xl">
+      Tu ficha de emergencia,<br><span class="bg-gradient-to-r from-rose-400 via-orange-300 to-amber-200 bg-clip-text text-transparent">lista en 2 minutos</span>
     </h1>
-    <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/75">
-      Sistema integrado de respuesta rápida y ficha médica de emergencia. Quien auxilia escanea el llavero o sticker NFC/QR y ve al instante alergias, tipo de sangre y contactos, mientras se avisa con la ubicación a tu familia.
-    </p>
-    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-      <a href="/crear" class="btn-cta inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-7 py-4 font-black shadow-xl shadow-rose-900/40">
-        Crear mi ficha gratis →
-      </a>
-      <a href="/crear" class="btn-ghost inline-flex items-center justify-center gap-3 rounded-2xl bg-white/10 px-6 py-4 font-semibold ring-1 ring-white/20 transition">
-        <svg class="h-5 w-5" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 36 26.7 37 24 37c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
-        Continuar con Google
-      </a>
-    </div>
-    <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/70">
-      <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> No se requiere tarjeta de crédito</li>
-      <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Sin instalar apps</li>
-      <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> iPhone y Android</li>
-    </ul>
-    <div class="mt-10 grid max-w-md grid-cols-3 gap-3 text-center">
-      <div class="glass rounded-2xl p-3"><p class="text-2xl font-black">0</p><p class="text-xs text-white/60">apps por instalar</p></div>
-      <div class="glass rounded-2xl p-3"><p class="text-2xl font-black">3</p><p class="text-xs text-white/60">pasos para auxiliar</p></div>
-      <div class="glass rounded-2xl p-3"><p class="text-2xl font-black">2</p><p class="text-xs text-white/60">sistemas operativos</p></div>
-    </div>
+    <p class="mx-auto mt-4 max-w-md text-white/75">Quien te auxilie escanea tu tag y ve tus datos médicos. Tus contactos reciben tu ubicación por SMS.</p>
   </div>
 
-  <!-- MOCKUP -->
-  <div class="reveal relative mx-auto w-full max-w-sm">
-    <div class="absolute -inset-10 rounded-full bg-violet-500/30 blur-3xl"></div>
-    <div class="float glass relative rounded-[2rem] p-4">
-      <div class="rounded-[1.5rem] bg-indigo-950/80 p-5 ring-1 ring-white/10">
-        <div class="flex items-center justify-between text-xs text-white/60">
-          <span>SOS TAG NFC</span><span class="rounded-full bg-rose-500 px-2 py-0.5 font-bold text-white">EMERGENCIA</span>
+  <!-- FORMULARIO -->
+  <section id="crear" class="reveal mt-10 glass rounded-3xl p-6 sm:p-8">
+
+    <!-- Indicador de pasos -->
+    <ol id="pasos" class="mb-7 grid grid-cols-3 gap-2 text-center text-xs font-bold">
+      <li class="paso rounded-xl px-2 py-2 ring-1 ring-white/15 transition">1 · Tus datos</li>
+      <li class="paso rounded-xl px-2 py-2 ring-1 ring-white/15 transition">2 · Salud</li>
+      <li class="paso rounded-xl px-2 py-2 ring-1 ring-white/15 transition">3 · Contactos</li>
+    </ol>
+
+    <form id="form" novalidate>
+      <!-- Paso 1 -->
+      <div data-step="0" class="space-y-4">
+        <div>
+          <label class="label" for="f-nombre">Nombre completo *</label>
+          <input id="f-nombre" class="field" autocomplete="name" placeholder="Ej. María Ramírez Torres">
         </div>
-        <div class="mt-4 flex items-center gap-3">
-          <div class="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-rose-500 to-orange-400 font-black">MR</div>
+        <div class="grid grid-cols-2 gap-4">
           <div>
-            <p class="font-black leading-tight">María Ramírez Torres</p>
-            <p class="text-xs text-white/60">34 años · Ciclista</p>
+            <label class="label" for="f-edad">Edad</label>
+            <input id="f-edad" class="field" inputmode="numeric" placeholder="34">
           </div>
-          <div class="ml-auto text-right"><p class="text-[10px] text-white/60">SANGRE</p><p class="text-xl font-black text-rose-300">O+</p></div>
-        </div>
-        <div class="mt-4 flex flex-wrap gap-1.5 text-[11px] font-semibold">
-          <span class="rounded-full bg-rose-500/25 px-2 py-1 text-rose-100 ring-1 ring-rose-400/40">Penicilina</span>
-          <span class="rounded-full bg-rose-500/25 px-2 py-1 text-rose-100 ring-1 ring-rose-400/40">Látex</span>
-          <span class="rounded-full bg-white/10 px-2 py-1 ring-1 ring-white/20">Asma moderada</span>
-        </div>
-        <div class="grid-map relative mt-4 h-28 overflow-hidden rounded-xl bg-indigo-900/60 ring-1 ring-white/10">
-          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <span class="ring absolute -inset-3 rounded-full bg-rose-500/50"></span>
-            <span class="relative block h-4 w-4 rounded-full bg-rose-500 ring-4 ring-rose-500/30"></span>
+          <div>
+            <label class="label" for="f-sangre">Tipo de sangre</label>
+            <select id="f-sangre" class="field">
+              <option value="">Selecciona</option>
+              <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+              <option value="?">No lo sé</option>
+            </select>
           </div>
         </div>
-        <div class="mt-4 flex items-center justify-between rounded-xl bg-emerald-500/15 px-3 py-2 text-xs ring-1 ring-emerald-400/30">
-          <span class="text-emerald-200">✓ Ubicación enviada a 2 contactos</span>
-          <span class="text-white/50">hace 12 s</span>
+        <div>
+          <label class="label" for="f-rol">Actividad (opcional)</label>
+          <input id="f-rol" class="field" placeholder="Ej. Ciclista, estudiante">
+        </div>
+        <div>
+          <label class="label" for="f-ciudad">Ciudad (opcional)</label>
+          <input id="f-ciudad" class="field" placeholder="Ej. Guadalajara, Jal.">
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- PRODUCTO -->
-<section id="producto" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="reveal text-center">
-    <p class="text-sm font-bold uppercase tracking-widest text-rose-300">El tema y el producto</p>
-    <h2 class="mt-3 text-3xl font-black sm:text-4xl">Identidad médica en un objeto que cabe en tu llavero</h2>
-  </div>
-  <div class="mt-12 grid gap-6 md:grid-cols-2">
-    <article class="reveal glass card-hover rounded-3xl p-8">
-      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-violet-500/30 text-2xl">🏷️</div>
-      <h3 class="text-xl font-black">Dispositivo físico</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Llavero o sticker NFC con código QR, vinculado a un token digital (NFT) que almacena la información médica esencial del usuario y activa protocolos inmediatos de auxilio en caso de percance.</p>
-    </article>
-    <article class="reveal glass card-hover rounded-3xl p-8">
-      <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-blue-500/30 text-2xl">🌎</div>
-      <h3 class="text-xl font-black">Proyección a futuro</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Consolidar el estándar de identidad médica en emergencias urbanas y deportivas, con integraciones directas con aseguradoras, redes hospitalarias y servicios asistenciales.</p>
-    </article>
-  </div>
-</section>
+      <!-- Paso 2 -->
+      <div data-step="1" class="hidden space-y-4">
+        <p class="text-sm text-white/70">Separa varios elementos con comas. Todo es opcional.</p>
+        <div>
+          <label class="label" for="f-alergias">Alergias</label>
+          <input id="f-alergias" class="field" placeholder="Ej. Penicilina, Látex">
+        </div>
+        <div>
+          <label class="label" for="f-padecimientos">Padecimientos</label>
+          <input id="f-padecimientos" class="field" placeholder="Ej. Asma, diabetes">
+        </div>
+        <div>
+          <label class="label" for="f-medicamentos">Medicamentos que tomas</label>
+          <input id="f-medicamentos" class="field" placeholder="Ej. Salbutamol inhalado">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label" for="f-seguro">Seguro médico</label>
+            <input id="f-seguro" class="field" placeholder="Ej. GNP">
+          </div>
+          <div>
+            <label class="label" for="f-poliza">No. de póliza</label>
+            <input id="f-poliza" class="field" placeholder="Opcional">
+          </div>
+        </div>
+      </div>
 
-<!-- PROCESO -->
-<section id="proceso" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="reveal text-center">
-    <p class="text-sm font-bold uppercase tracking-widest text-rose-300">Proceso operativo</p>
-    <h2 class="mt-3 text-3xl font-black sm:text-4xl">Tres pasos para auxiliar</h2>
-  </div>
-  <div class="mt-12 grid gap-6 md:grid-cols-3">
-    <article class="reveal glass card-hover rounded-3xl p-8">
-      <span class="text-5xl font-black text-white/20">01</span>
-      <h3 class="mt-2 text-xl font-black">Escaneo inmediato</h3>
-      <p class="mt-3 leading-relaxed text-white/75">El transeúnte o paramédico escanea el sticker o llavero vía NFC o QR, sin instalar aplicaciones.</p>
-    </article>
-    <article class="reveal glass card-hover rounded-3xl p-8">
-      <span class="text-5xl font-black text-white/20">02</span>
-      <h3 class="mt-2 text-xl font-black">Despliegue médico</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Aparece en pantalla la ficha crítica: alergias, tipo de sangre, padecimientos y contactos clave.</p>
-    </article>
-    <article class="reveal glass card-hover rounded-3xl p-8">
-      <span class="text-5xl font-black text-white/20">03</span>
-      <h3 class="mt-2 text-xl font-black">Alerta GPS en tiempo real</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Se prepara un aviso al contacto de emergencia con la ubicación exacta del evento y se muestra en un mapa.</p>
-    </article>
-  </div>
-</section>
+      <!-- Paso 3 -->
+      <div data-step="2" class="hidden space-y-5">
+        <p class="text-sm text-white/70">Ellos recibirán tu ubicación si alguien escanea tu tag. El primero es obligatorio.</p>
+        <fieldset class="space-y-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+          <legend class="px-1 text-sm font-bold">Contacto 1 *</legend>
+          <input id="c-nombre1" class="field" placeholder="Nombre">
+          <div class="grid grid-cols-2 gap-3">
+            <input id="c-rel1" class="field" placeholder="Parentesco (ej. Mamá)">
+            <input id="c-tel1" class="field" type="tel" inputmode="tel" placeholder="Teléfono">
+          </div>
+        </fieldset>
+        <fieldset class="space-y-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+          <legend class="px-1 text-sm font-bold">Contacto 2 <span class="font-normal text-white/50">(opcional)</span></legend>
+          <input id="c-nombre2" class="field" placeholder="Nombre">
+          <div class="grid grid-cols-2 gap-3">
+            <input id="c-rel2" class="field" placeholder="Parentesco">
+            <input id="c-tel2" class="field" type="tel" inputmode="tel" placeholder="Teléfono">
+          </div>
+        </fieldset>
+        <fieldset class="space-y-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+          <legend class="px-1 text-sm font-bold">Contacto 3 <span class="font-normal text-white/50">(opcional)</span></legend>
+          <input id="c-nombre3" class="field" placeholder="Nombre">
+          <div class="grid grid-cols-2 gap-3">
+            <input id="c-rel3" class="field" placeholder="Parentesco">
+            <input id="c-tel3" class="field" type="tel" inputmode="tel" placeholder="Teléfono">
+          </div>
+        </fieldset>
+        <label class="flex gap-3 text-sm text-white/80">
+          <input id="consent" type="checkbox" class="mt-1 h-4 w-4 accent-rose-500">
+          <span>Mis contactos aceptan recibir avisos por SMS. Entiendo que cualquier persona que escanee el tag verá esta información.</span>
+        </label>
+      </div>
 
-<!-- MERCADO -->
-<section id="mercado" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="reveal text-center">
-    <p class="text-sm font-bold uppercase tracking-widest text-rose-300">Análisis de mercado y ventaja</p>
-  </div>
-  <div class="mt-12 grid gap-6 md:grid-cols-3">
-    <article class="reveal glass card-hover rounded-3xl p-7">
-      <h3 class="text-lg font-black">🎯 Mercado objetivo</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Deportistas de alto riesgo, ciclistas, motociclistas, adultos mayores y personas con condiciones médicas severas.</p>
-    </article>
-    <article class="reveal glass card-hover rounded-3xl p-7">
-      <h3 class="text-lg font-black">⚡ Diferenciador clave</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Solución cero fricción: quien auxilie no requiere registrarse ni bajar software.</p>
-    </article>
-    <article class="reveal glass card-hover rounded-3xl p-7">
-      <h3 class="text-lg font-black">🔐 Valor del token (NFT)</h3>
-      <p class="mt-3 leading-relaxed text-white/75">Garantiza la inmutabilidad de la propiedad del dispositivo, la autenticidad del perfil digital y habilita la gestión descentralizada de suscripciones o registros asistenciales.</p>
-    </article>
-  </div>
-</section>
+      <p id="err" class="mt-4 min-h-[1.25rem] text-sm font-semibold text-rose-300" role="alert"></p>
 
-<!-- EQUIPO Y AVANCE -->
-<section id="equipo" class="mx-auto grid max-w-6xl gap-6 px-5 py-20 lg:grid-cols-2">
-  <div class="reveal glass rounded-3xl p-8">
-    <h2 class="text-2xl font-black">Estructura del equipo</h2>
-    <ul class="mt-6 space-y-5">
-      <li class="flex gap-4"><span class="text-2xl">🔧</span><div><p class="font-bold">Hardware y NFC</p><p class="text-sm leading-relaxed text-white/70">Configuración de tags físicos NFC, impresión de códigos QR de alta durabilidad y selección de materiales resistentes a la intemperie.</p></div></li>
-      <li class="flex gap-4"><span class="text-2xl">💻</span><div><p class="font-bold">Software y alertas</p><p class="text-sm leading-relaxed text-white/70">Web app responsiva, base de datos encriptada y motor de envío automatizado de ubicación GPS.</p></div></li>
-      <li class="flex gap-4"><span class="text-2xl">🔗</span><div><p class="font-bold">Web3 y negocio</p><p class="text-sm leading-relaxed text-white/70">Smart contract para el registro NFT, esquema de privacidad e investigación de mercado.</p></div></li>
-    </ul>
-  </div>
-  <div class="reveal glass rounded-3xl p-8">
-    <h2 class="text-2xl font-black">Estado del avance</h2>
-    <ul class="mt-6 space-y-4 text-sm leading-relaxed text-white/80">
-      <li class="flex gap-3"><span class="text-emerald-400">✅</span> Prototipo físico NFC/QR probado con lecturas en dispositivos iOS y Android.</li>
-      <li class="flex gap-3"><span class="text-emerald-400">✅</span> Interfaz web de perfil médico responsivo completada y optimizada para carga rápida.</li>
-      <li class="flex gap-3"><span class="text-emerald-400">✅</span> Aviso con ubicación GPS al escanear el tag (QR/NFC).</li>
-      <li class="flex gap-3"><span class="text-amber-300">🔄</span> En proceso: despliegue del smart contract en mainnet.</li>
-    </ul>
-  </div>
-</section>
+      <div class="mt-4 flex items-center gap-3">
+        <button type="button" id="atras" class="btn-ghost rounded-2xl bg-white/10 px-5 py-3 font-semibold ring-1 ring-white/20 invisible">← Atrás</button>
+        <button type="button" id="siguiente" class="btn-cta flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-5 py-3 font-black shadow-lg shadow-rose-900/40">Siguiente →</button>
+        <button type="submit" id="crear-btn" class="btn-cta hidden flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-5 py-3 font-black shadow-lg shadow-rose-900/40">Crear mi ficha</button>
+      </div>
+      <div class="mt-4 flex items-center justify-between text-xs text-white/55">
+        <span>Tus datos se guardan cifrados dentro del enlace, no en una base de datos.</span>
+        <button type="button" id="borrar" class="underline underline-offset-2 hover:text-white">Borrar datos guardados</button>
+      </div>
+    </form>
 
-<!-- DEMO -->
-<section id="demo" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="reveal text-center">
-    <p class="text-sm font-bold uppercase tracking-widest text-rose-300">Demo interactiva</p>
-    <h2 class="mt-3 text-3xl font-black sm:text-4xl">Así lo ve quien auxilia</h2>
-    <p class="mx-auto mt-3 max-w-xl text-white/70">Datos de ejemplo. Toca el botón para simular un escaneo.</p>
-  </div>
-  <div class="reveal mt-12 grid items-center gap-8 lg:grid-cols-2">
-    <div class="glass rounded-3xl p-6">
+    <!-- RESULTADO -->
+    <div id="resultado" class="hidden space-y-6 text-center">
+      <div>
+        <p class="text-4xl">✅</p>
+        <h2 class="mt-2 text-2xl font-black">¡Tu ficha está lista!</h2>
+        <p class="mt-1 text-sm text-white/70">Dos códigos, dos usos. Imprímelos o grábalos en tu tag.</p>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="glass card-hover rounded-2xl p-4">
+          <div class="mx-auto w-fit rounded-xl bg-white p-2"><canvas id="qr-ficha" width="200" height="200"></canvas></div>
+          <p class="mt-3 font-black">QR de ficha</p>
+          <p class="mt-1 text-xs text-white/65">Muestra tus datos médicos y tu ubicación al escanearlo.</p>
+          <button id="dl-ficha" class="btn-ghost mt-3 w-full rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/20">Descargar</button>
+        </div>
+        <div class="glass card-hover rounded-2xl p-4 ring-1 ring-rose-400/40">
+          <div class="mx-auto w-fit rounded-xl bg-white p-2"><canvas id="qr-aux" width="200" height="200"></canvas></div>
+          <p class="mt-3 font-black text-rose-200">QR de auxilio</p>
+          <p class="mt-1 text-xs text-white/65">Abre directo el aviso con tu ubicación. Ponlo en el casco, el auto o la mochila.</p>
+          <button id="dl-aux" class="btn-ghost mt-3 w-full rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/20">Descargar</button>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <button id="grabar-nfc" class="btn-cta w-full rounded-2xl bg-gradient-to-r from-violet-500 to-blue-500 px-5 py-4 font-black shadow-lg shadow-violet-900/40">📲 Grabar ficha en tag NFC</button>
+        <p id="nfc-estado" class="min-h-[1.25rem] text-sm text-white/70"></p>
+      </div>
       <div class="flex flex-col gap-3 sm:flex-row">
-        <button id="scan" class="btn-cta flex-1 rounded-2xl bg-gradient-to-r from-violet-500 to-blue-500 px-5 py-4 font-black shadow-xl shadow-violet-900/40">📲 Escanear tag NFC</button>
-        <a href="/t/7F3A-92C1" class="btn-ghost flex-1 rounded-2xl bg-white/10 px-5 py-4 text-center font-bold ring-1 ring-white/20 transition">Abrir la ficha demo</a>
-      </div>
-      <div id="alert" class="mt-5 min-h-[3.5rem] rounded-2xl bg-white/5 p-4 text-sm text-white/70 ring-1 ring-white/10">Aquí aparecerá el resultado del escaneo.</div>
-      <p class="mt-4 text-xs text-white/50">La demo no envía mensajes reales. La ficha real sí muestra el mapa y el botón de aviso.</p>
-    </div>
-    <div class="glass rounded-3xl p-6">
-      <div id="ficha" class="hidden space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-rose-500 to-orange-400 font-black">MR</div>
-          <div><p class="font-black">María Ramírez Torres</p><p class="text-xs text-white/60">34 años · Ciclista · Guadalajara, Jal.</p></div>
-          <span class="ml-auto text-2xl font-black text-rose-300">O+</span>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs font-semibold">
-          <span class="rounded-full bg-rose-500/25 px-3 py-1 text-rose-100 ring-1 ring-rose-400/40">Penicilina</span>
-          <span class="rounded-full bg-rose-500/25 px-3 py-1 text-rose-100 ring-1 ring-rose-400/40">Látex</span>
-          <span class="rounded-full bg-rose-500/25 px-3 py-1 text-rose-100 ring-1 ring-rose-400/40">Ibuprofeno</span>
-          <span class="rounded-full bg-white/10 px-3 py-1 ring-1 ring-white/20">Asma moderada</span>
-        </div>
-        <ul class="space-y-2 text-sm">
-          <li class="flex justify-between rounded-xl bg-white/5 p-3 ring-1 ring-white/10"><span class="font-bold">Luis Torres</span><span class="text-white/60">Padre</span></li>
-          <li class="flex justify-between rounded-xl bg-white/5 p-3 ring-1 ring-white/10"><span class="font-bold">Ana Ramírez</span><span class="text-white/60">Hermana</span></li>
-        </ul>
-      </div>
-      <div id="ficha-vacia" class="grid h-full min-h-[14rem] place-items-center text-center text-white/50">
-        <div><p class="text-5xl">📱</p><p class="mt-2 text-sm">La ficha aparecerá aquí</p></div>
+        <a id="abrir" href="#" class="btn-ghost flex-1 rounded-2xl bg-white/10 px-5 py-3 font-semibold ring-1 ring-white/20">Ver mi ficha</a>
+        <button id="nueva" class="btn-ghost flex-1 rounded-2xl bg-white/10 px-5 py-3 font-semibold ring-1 ring-white/20">Crear otra ficha</button>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- INTERFAZ -->
-<section id="interfaz" class="mx-auto max-w-6xl px-5 py-20">
-  <div class="reveal glass rounded-3xl p-8 sm:p-12">
-    <h2 class="text-2xl font-black sm:text-3xl">Avance de la interfaz web</h2>
-    <div class="mt-8 grid gap-4 sm:grid-cols-2">
-      <div class="card-hover rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">🩺 Ficha médica de emergencia al escanear (NFC/QR)</div>
-      <div class="card-hover rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">📱 Diseño responsivo: escritorio, tableta y celular</div>
-      <div class="card-hover rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">🗺️ Mapa y ubicación del escaneo</div>
-      <div class="card-hover rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">🪙 Panel del dispositivo y token NFT</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="mx-auto max-w-4xl px-5 pb-24 text-center">
-  <div class="reveal glass rounded-3xl p-10 sm:p-14">
-    <h2 class="text-3xl font-black sm:text-4xl">Protege a quien más quieres hoy</h2>
-    <p class="mx-auto mt-4 max-w-xl text-white/75">Crea tu ficha en minutos, graba el QR o el NFC y listo. No se requiere tarjeta de crédito.</p>
-    <a href="/crear" class="btn-cta mt-8 inline-flex rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-8 py-4 font-black shadow-xl shadow-rose-900/40">Crear mi ficha gratis →</a>
-  </div>
-</section>
+  <!-- NFC -->
+  <section id="nfc" class="reveal mt-8 glass rounded-3xl p-6 sm:p-8">
+    <h2 class="text-xl font-black">📲 Escanear tag NFC</h2>
+    <p class="mt-2 text-sm leading-relaxed text-white/75">Acerca un tag NFC al celular. Si ya tiene una ficha, la abrimos. Si está vacío, te llevamos a crear tu ficha y luego la grabas en él.</p>
+    <button id="leer-nfc" class="btn-cta mt-5 w-full rounded-2xl bg-gradient-to-r from-violet-500 to-blue-500 px-5 py-4 font-black shadow-lg shadow-violet-900/40">Escanear tag</button>
+    <p id="nfc-resultado" class="mt-4 min-h-[1.25rem] text-sm text-white/80"></p>
+    <p class="mt-4 text-xs text-white/50">Requiere Chrome en Android con NFC encendido. En iPhone el navegador no permite leer ni grabar NFC; usa el QR.</p>
+  </section>
 </main>
 
-<footer class="border-t border-white/10 px-5 py-8 text-center text-sm text-white/60">
+<footer class="border-t border-white/10 px-4 py-8 text-center text-sm text-white/60">
   <p class="font-bold text-white/80">SOS <span class="text-rose-400">TAG</span> NFC</p>
-  <p class="mt-1">Proyecto universitario · Universidad de Guadalajara, CUCEI</p>
+  <p class="mt-1">Proyecto universitario · <a href="/nosotros.html" class="underline underline-offset-2 hover:text-white">Conoce más de nosotros</a></p>
 </footer>
 
+<script src="qr.js"></script>
 <script>
-// Revelar al hacer scroll
+const $ = id => document.getElementById(id);
+const DRAFT_KEY = 'sos_tag_borrador';
+const CAMPOS = ['f-nombre','f-edad','f-sangre','f-rol','f-ciudad','f-alergias','f-padecimientos','f-medicamentos','f-seguro','f-poliza','c-nombre1','c-rel1','c-tel1','c-nombre2','c-rel2','c-tel2','c-nombre3','c-rel3','c-tel3'];
+const TOTAL = 3;
+let paso = 0, urlFicha = '', tagListo = false;
+
+/* ---------- pasos ---------- */
+function mostrarPaso(i) {
+  paso = i;
+  document.querySelectorAll('[data-step]').forEach(el => el.classList.toggle('hidden', +el.dataset.step !== i));
+  document.querySelectorAll('.paso').forEach((el, k) => {
+    el.classList.toggle('bg-gradient-to-r', k === i);
+    el.classList.toggle('from-rose-500', k === i);
+    el.classList.toggle('to-orange-400', k === i);
+    el.classList.toggle('text-white', k === i);
+    el.classList.toggle('shadow-lg', k === i);
+    el.classList.toggle('text-white/60', k !== i);
+  });
+  $('atras').classList.toggle('invisible', i === 0);
+  $('siguiente').classList.toggle('hidden', i === TOTAL - 1);
+  $('crear-btn').classList.toggle('hidden', i !== TOTAL - 1);
+  $('err').textContent = '';
+}
+
+function errorPaso(i) {
+  if (i === 0 && !$('f-nombre').value.trim()) return 'Escribe tu nombre para continuar.';
+  if (i === 2) {
+    const c1n = $('c-nombre1').value.trim(), c1t = normTel($('c-tel1').value);
+    if (!c1n || !c1t) return 'El contacto 1 necesita nombre y un teléfono válido (10 dígitos o +código de país).';
+    for (const n of [2, 3]) {
+      const nm = $('c-nombre' + n).value.trim(), tl = $('c-tel' + n).value.trim();
+      if ((nm || tl) && !normTel(tl)) return `El teléfono del contacto ${n} no es válido.`;
+    }
+    if (!$('consent').checked) return 'Confirma que tus contactos aceptan recibir avisos.';
+  }
+  return '';
+}
+
+$('siguiente').onclick = () => {
+  const e = errorPaso(paso);
+  if (e) return $('err').textContent = e;
+  mostrarPaso(paso + 1);
+};
+$('atras').onclick = () => mostrarPaso(Math.max(0, paso - 1));
+
+/* ---------- utilidades ---------- */
+function normTel(v) {
+  let t = String(v || '').replace(/[^\d+]/g, '');
+  if (/^\d{10}$/.test(t)) t = '+52' + t;
+  return /^\+\d{10,15}$/.test(t) ? t : null;
+}
+
+function leerCampos() {
+  const v = id => $(id).value.trim();
+  const contacts = [1, 2, 3].map(n => ({ name: v('c-nombre' + n), rel: v('c-rel' + n), phone: v('c-tel' + n) }))
+    .filter(c => c.name && c.phone);
+  return {
+    name: v('f-nombre'), age: v('f-edad'), role: v('f-rol'), city: v('f-ciudad'), blood: $('f-sangre').value,
+    allergies: v('f-alergias'), conditions: v('f-padecimientos'), meds: v('f-medicamentos'),
+    insurance: v('f-seguro'), policy: v('f-poliza'), contacts
+  };
+}
+
+/* ---------- borrador en este celular (para crear la siguiente más rápido) ---------- */
+function guardarBorrador() {
+  try {
+    const o = {};
+    CAMPOS.forEach(id => o[id] = $(id).value);
+    o.consent = $('consent').checked;
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(o));
+  } catch {}
+}
+function cargarBorrador() {
+  try {
+    const o = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    if (!o) return;
+    CAMPOS.forEach(id => { if (o[id] != null) $(id).value = o[id]; });
+    $('consent').checked = !!o.consent;
+  } catch {}
+}
+document.querySelectorAll('#form input, #form select').forEach(el => el.addEventListener('input', guardarBorrador));
+document.querySelectorAll('#form select, #form input[type=checkbox]').forEach(el => el.addEventListener('change', guardarBorrador));
+$('borrar').onclick = () => {
+  try { localStorage.removeItem(DRAFT_KEY); } catch {}
+  CAMPOS.forEach(id => $(id).value = '');
+  $('consent').checked = false;
+  mostrarPaso(0);
+  $('err').textContent = 'Datos borrados de este celular.';
+};
+
+/* ---------- crear ficha ---------- */
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  for (let i = 0; i < TOTAL; i++) {
+    const err = errorPaso(i);
+    if (err) { mostrarPaso(i); $('err').textContent = err; return; }
+  }
+  const btn = $('crear-btn');
+  btn.disabled = true; btn.textContent = 'Creando tu ficha…';
+  try {
+    const r = await fetch('/api/index?action=crear', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(leerCampos())
+    });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 404) throw new Error('El servidor no está disponible. Revisa que api/index.js esté en la raíz del proyecto y redespliega.');
+    if (!r.ok) throw new Error(j.error || 'Error ' + r.status + ' del servidor.');
+    mostrarResultado(j.url);
+  } catch (x) {
+    $('err').textContent = x.message.includes('fetch') ? 'Sin conexión con el servidor.' : x.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Crear mi ficha';
+  }
+});
+
+function mostrarResultado(url) {
+  urlFicha = url;
+  makeQR($('qr-ficha'), url, 200);
+  makeQR($('qr-aux'), url + '?aux=1', 200);
+  $('abrir').href = url;
+  $('crear').querySelector('form').classList.add('hidden');
+  document.querySelector('#crear > ol').classList.add('hidden');
+  $('resultado').classList.remove('hidden');
+  $('crear').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function descargar(canvasId, nombre) {
+  const a = document.createElement('a');
+  a.href = $(canvasId).toDataURL('image/png'); a.download = nombre; a.click();
+}
+$('dl-ficha').onclick = () => descargar('qr-ficha', 'sos-tag-qr-ficha.png');
+$('dl-aux').onclick = () => descargar('qr-aux', 'sos-tag-qr-auxilio.png');
+
+$('nueva').onclick = () => {
+  $('resultado').classList.add('hidden');
+  $('crear').querySelector('form').classList.remove('hidden');
+  document.querySelector('#crear > ol').classList.remove('hidden');
+  mostrarPaso(0);
+  $('crear').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+/* ---------- NFC (Web NFC: solo Chrome en Android) ---------- */
+const NFC_OK = 'NDEFReader' in window;
+
+function leerUrlNDEF(message) {
+  for (const r of message.records) {
+    if (r.recordType === 'url') return new TextDecoder().decode(r.data);
+  }
+  return null;
+}
+
+$('leer-nfc').onclick = async () => {
+  const out = $('nfc-resultado');
+  if (!NFC_OK) { out.textContent = 'Este navegador no permite NFC. Usa Chrome en Android o el QR.'; return; }
+  try {
+    const reader = new NDEFReader();
+    out.textContent = 'Acerca el tag al celular…';
+    await reader.scan();
+    reader.onreading = ({ message }) => {
+      const url = leerUrlNDEF(message);
+      if (url && url.includes('/t/')) {
+        out.textContent = 'Este tag ya tiene ficha. Abriéndola…';
+        setTimeout(() => location.href = url, 600);
+      } else {
+        tagListo = true;
+        out.textContent = 'Tag vacío listo. Crea tu ficha abajo y después toca "Grabar ficha en tag NFC".';
+        $('crear').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    reader.onreadingerror = () => out.textContent = 'No se pudo leer el tag. Intenta de nuevo.';
+  } catch (e) {
+    out.textContent = 'No se pudo activar NFC: ' + e.message + '. Revisa que el NFC esté encendido y que des permiso.';
+  }
+};
+
+$('grabar-nfc').onclick = async () => {
+  const out = $('nfc-estado');
+  if (!NFC_OK) { out.textContent = 'Este navegador no permite grabar NFC. Usa Chrome en Android o imprime el QR.'; return; }
+  try {
+    out.textContent = 'Acerca el tag al celular para grabarlo…';
+    await new NDEFReader().write({ records: [{ recordType: 'url', data: urlFicha }] });
+    out.textContent = '✅ Tag grabado. Al acercarlo al celular se abrirá tu ficha.';
+  } catch (e) {
+    out.textContent = 'No se pudo grabar: ' + e.message + '. Acerca el tag y vuelve a intentar.';
+  }
+};
+
+if (!NFC_OK) $('leer-nfc').textContent = 'Escanear tag (requiere Android con Chrome)';
+
+/* ---------- inicio ---------- */
+cargarBorrador();
+mostrarPaso(0);
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }), { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-// Demo de escaneo
-const scan = document.getElementById('scan'), alertBox = document.getElementById('alert');
-const ficha = document.getElementById('ficha'), vacia = document.getElementById('ficha-vacia');
-scan.addEventListener('click', () => {
-  scan.disabled = true; scan.classList.add('opacity-70');
-  alertBox.textContent = '📍 Obteniendo ubicación y preparando el aviso…';
-  ficha.classList.remove('hidden'); vacia.classList.add('hidden');
-  setTimeout(() => {
-    alertBox.innerHTML = '✅ <b class="text-emerald-300">Aviso listo</b> con ubicación para 2 contactos. En la ficha real, quien escanea toca “Enviar” en su app de mensajes.';
-    scan.disabled = false; scan.classList.remove('opacity-70');
-  }, 1800);
-});
 </script>
 </body>
 </html>
