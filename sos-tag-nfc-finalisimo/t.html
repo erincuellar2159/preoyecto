@@ -5,64 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SOS TAG NFC — Ficha de emergencia</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-body{background:var(--bg)}
-.top{background:var(--ink);color:#fff;padding:14px 5vw;display:flex;justify-content:space-between;align-items:center;font-weight:900}
-.top span{color:var(--red)}.top em{font-style:normal;background:var(--red);font-size:12px;padding:5px 12px;border-radius:99px}
-.wrap{max-width:860px;margin:20px auto;padding:0 14px}
-.ficha{animation:none;margin-top:0}
-.call{background:var(--ok);color:#fff;text-decoration:none;font-weight:700;padding:8px 16px;border-radius:10px;float:right}
-.aviso{display:block;text-align:center;margin:18px 0 6px;background:var(--red);color:#fff;text-decoration:none;font-weight:800;font-size:18px;padding:16px;border-radius:12px}
-.aviso.off{opacity:.6;pointer-events:none}
-.estado{text-align:center;font-size:14px;color:var(--mut);margin:6px 0 0}
-.foot{text-align:center;color:var(--mut);font-size:13px;margin:14px 0}
+  body{font-family:Inter,system-ui,sans-serif}
+  .glass{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+  .bg-app{background:radial-gradient(1200px 600px at 10% -10%,#6d28d9 0%,transparent 60%),radial-gradient(900px 500px at 110% 10%,#2563eb 0%,transparent 55%),linear-gradient(160deg,#1e1b4b 0%,#312e81 45%,#1e3a8a 100%)}
+  .pulse-ring{animation:ring 1.8s ease-out infinite}
+  @keyframes ring{0%{transform:scale(.8);opacity:.7}100%{transform:scale(2.2);opacity:0}}
+  .fade-up{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .fade-up.show{opacity:1;transform:none}
+  .skeleton{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.14),rgba(255,255,255,.06));background-size:200% 100%;animation:sh 1.4s infinite}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  iframe{filter:saturate(.9) contrast(1.02)}
 </style>
 </head>
-<body>
-<div class="top"><div>SOS <span>TAG</span> NFC</div><em>FICHA DE EMERGENCIA</em></div>
-<div class="wrap"><div class="ficha" id="root">Cargando ficha…</div><div class="foot" id="foot"></div></div>
+<body class="bg-app min-h-screen text-white antialiased">
+
+<header class="sticky top-0 z-20 border-b border-white/10 backdrop-blur-xl bg-indigo-950/40">
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+    <a href="/" class="flex items-center gap-2 font-black tracking-wide">
+      <span class="grid h-8 w-8 place-items-center rounded-lg bg-rose-500 text-sm">🚑</span>
+      SOS <span class="text-rose-400">TAG</span> NFC
+    </a>
+    <span class="rounded-full bg-rose-500 px-3 py-1 text-xs font-bold tracking-wider">FICHA DE EMERGENCIA</span>
+  </div>
+</header>
+
+<main class="mx-auto max-w-5xl px-4 pb-16 pt-6">
+  <div id="root" class="space-y-5">
+    <div class="glass rounded-3xl p-6"><div class="skeleton h-6 w-48 rounded"></div><div class="skeleton mt-4 h-24 rounded-2xl"></div></div>
+  </div>
+  <p id="foot" class="mt-8 text-center text-xs text-white/50"></p>
+</main>
+
 <script>
 const id = decodeURIComponent(location.pathname.split('/').pop());
 const root = document.getElementById('root');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const chips = (a, cls = '') => `<p class="chips ${cls}">${a.map(x => `<span>${esc(x)}</span>`).join('')}</p>`;
 let ficha = null, pos = null;
 
 fetch('/api/index?action=tag&id=' + encodeURIComponent(id))
   .then(r => r.ok ? r.json() : Promise.reject())
-  .then(render)
-  .catch(() => root.textContent = 'Tag no encontrado o no activo.');
+  .then(p => { ficha = p; render(p); locate(); })
+  .catch(() => {
+    root.innerHTML = `<div class="glass rounded-3xl p-8 text-center"><p class="text-4xl">🔎</p><h2 class="mt-3 text-xl font-bold">Tag no encontrado</h2><p class="mt-1 text-white/70">Este código no está activo o fue dado de baja.</p></div>`;
+  });
+
+const chips = (arr, tone) => arr.length
+  ? arr.map(x => `<span class="rounded-full px-3 py-1 text-sm font-semibold ${tone}">${esc(x)}</span>`).join('')
+  : '<span class="text-sm text-white/50">Ninguno registrado</span>';
 
 function render(p) {
-  ficha = p;
   const ini = p.name.split(' ').slice(0, 2).map(w => w[0]).join('');
   root.innerHTML = `
-  <div class="ficha-head"><div class="avatar">${esc(ini)}</div>
-    <div><h3>${esc(p.name)}</h3><p>${[p.age ? p.age + ' años' : '', p.role, p.city].filter(Boolean).map(esc).join(' · ')}</p></div>
-    <div class="blood"><small>TIPO DE SANGRE</small><b>${esc(p.blood)}</b></div></div>
-  <div class="ficha-body"><div>
-    <h4>Alergias</h4>${chips(p.allergies, 'r')}
-    <h4>Padecimientos</h4>${chips(p.conditions)}
-    <h4>Medicamentos</h4>${chips(p.meds)}</div>
-  <div><h4>Contactos de emergencia</h4><ul class="contacts">
-    ${p.contacts.map(c => `<li><a class="call" href="tel:${esc(c.tel)}">Llamar</a><b>${esc(c.name)}</b><small>${esc(c.rel)}</small></li>`).join('')}
-    ${p.insurance ? `<li><b>${esc(p.insurance.name)}</b><small>${p.insurance.policy ? 'Póliza #' + esc(p.insurance.policy) : 'Seguro'}</small></li>` : ''}
-  </ul></div></div>
-  <a class="aviso off" id="aviso" href="#">📍 Obteniendo ubicación…</a>
-  <p class="estado" id="estado">Toca el botón para abrir el SMS a tus contactos con la ubicación ya escrita. Tú solo tienes que enviarlo.</p>`;
+    <section class="glass fade-up rounded-3xl p-6 sm:p-8">
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <div class="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-rose-500 to-orange-400 text-xl font-black shadow-lg">${esc(ini)}</div>
+          <div>
+            <h1 class="text-2xl font-black leading-tight">${esc(p.name)}</h1>
+            <p class="text-sm text-white/70">${[p.age ? p.age + ' años' : '', p.role, p.city].filter(Boolean).map(esc).join(' · ')}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 self-start rounded-2xl bg-rose-500/20 px-5 py-3 ring-1 ring-rose-400/40">
+          <span class="text-xs font-bold tracking-widest text-rose-200">TIPO DE SANGRE</span>
+          <span class="text-3xl font-black">${esc(p.blood)}</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid gap-5 md:grid-cols-2">
+      <section class="glass fade-up rounded-3xl p-6">
+        <h2 class="mb-3 text-sm font-bold uppercase tracking-widest text-white/60">Alergias</h2>
+        <div class="flex flex-wrap gap-2">${chips(p.allergies, 'bg-rose-500/25 text-rose-100 ring-1 ring-rose-400/40')}</div>
+        <h2 class="mb-3 mt-6 text-sm font-bold uppercase tracking-widest text-white/60">Padecimientos</h2>
+        <div class="flex flex-wrap gap-2">${chips(p.conditions, 'bg-white/10 ring-1 ring-white/20')}</div>
+        <h2 class="mb-3 mt-6 text-sm font-bold uppercase tracking-widest text-white/60">Medicamentos</h2>
+        <div class="flex flex-wrap gap-2">${chips(p.meds, 'bg-white/10 ring-1 ring-white/20')}</div>
+      </section>
+
+      <section class="glass fade-up rounded-3xl p-6">
+        <h2 class="mb-3 text-sm font-bold uppercase tracking-widest text-white/60">Contactos de emergencia</h2>
+        <ul class="space-y-3">
+          ${p.contacts.map(c => `
+            <li class="flex items-center justify-between gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:bg-white/10">
+              <div class="min-w-0">
+                <p class="truncate font-bold">${esc(c.name)}</p>
+                <p class="text-xs text-white/60">${esc(c.rel)}</p>
+              </div>
+              <a href="tel:${esc(c.tel)}" class="shrink-0 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-400">Llamar</a>
+            </li>`).join('')}
+        </ul>
+        ${p.insurance ? `<div class="mt-4 rounded-2xl bg-white/5 p-3 text-sm ring-1 ring-white/10"><b>${esc(p.insurance.name)}</b><span class="block text-xs text-white/60">${p.insurance.policy ? 'Póliza #' + esc(p.insurance.policy) : 'Seguro'}</span></div>` : ''}
+      </section>
+    </div>
+
+    <section class="glass fade-up rounded-3xl p-6">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-black">📍 Ubicación del escaneo</h2>
+          <p id="loc-estado" class="text-sm text-white/70">Obteniendo ubicación…</p>
+        </div>
+        <button id="retry" class="hidden rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/20 transition hover:bg-white/20">Reintentar ubicación</button>
+      </div>
+      <div class="relative overflow-hidden rounded-2xl ring-1 ring-white/15">
+        <div id="map-placeholder" class="skeleton grid h-64 place-items-center text-sm text-white/60">Esperando ubicación…</div>
+        <iframe id="map" class="hidden h-64 w-full border-0" loading="lazy" title="Mapa de la ubicación"></iframe>
+      </div>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+        <a id="aviso" href="#" class="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-400 px-5 py-4 text-center font-black shadow-lg shadow-rose-900/40 transition hover:scale-[1.01] hover:shadow-rose-700/60 pointer-events-none opacity-60">✉️ Avisar a mis contactos por SMS</a>
+        <a id="gmaps" href="#" target="_blank" rel="noopener" class="hidden flex-1 rounded-2xl bg-white/10 px-5 py-4 text-center font-bold ring-1 ring-white/20 transition hover:bg-white/20">Abrir en Google Maps</a>
+      </div>
+      <p class="mt-3 text-center text-xs text-white/50">El SMS sale desde el celular que escaneó el tag. Toca "Enviar" en tu app de mensajes.</p>
+    </section>`;
   document.getElementById('foot').textContent = 'Leído vía NFC/QR · SOS TAG NFC';
-  getPos().then(p => { pos = p; prepararAviso(); });
+  requestAnimationFrame(() => document.querySelectorAll('.fade-up').forEach((el, i) => setTimeout(() => el.classList.add('show'), i * 120)));
+  document.getElementById('retry').onclick = locate;
 }
 
-function getPos() {
-  return new Promise(res => {
-    if (!navigator.geolocation) return res(null);
-    navigator.geolocation.getCurrentPosition(
-      p => res({ lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy }),
-      () => res(null),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
-  });
+function locate() {
+  const est = document.getElementById('loc-estado');
+  const retry = document.getElementById('retry');
+  if (!navigator.geolocation) { return sinUbicacion('Este navegador no permite ubicación.'); }
+  est.textContent = 'Pidiendo permiso de ubicación…';
+  retry.classList.add('hidden');
+  navigator.geolocation.getCurrentPosition(
+    p => {
+      pos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy };
+      mostrarMapa();
+      est.textContent = `Ubicación obtenida · precisión ±${Math.round(pos.acc)} m`;
+      prepararAviso();
+    },
+    () => sinUbicacion('No se dio permiso de ubicación. El aviso saldrá sin mapa.'),
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+}
+
+function sinUbicacion(msg) {
+  document.getElementById('loc-estado').textContent = msg;
+  document.getElementById('retry').classList.remove('hidden');
+  prepararAviso();
+}
+
+function mostrarMapa() {
+  const d = 0.004, bbox = `${pos.lon - d},${pos.lat - d},${pos.lon + d},${pos.lat + d}`;
+  const map = document.getElementById('map');
+  map.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${pos.lat},${pos.lon}`;
+  map.classList.remove('hidden');
+  document.getElementById('map-placeholder').classList.add('hidden');
+  const g = document.getElementById('gmaps');
+  g.href = `https://maps.google.com/?q=${pos.lat.toFixed(5)},${pos.lon.toFixed(5)}`;
+  g.classList.remove('hidden');
 }
 
 function textoAviso() {
@@ -74,18 +169,13 @@ function textoAviso() {
   return `🚨 SOS TAG: ${ficha.name} fue escaneada tras un posible percance (${hora}). ${loc} Tipo ${ficha.blood}${alergias}.`;
 }
 
-// Abre la app de SMS con los números y el texto ya escritos. El usuario solo toca "Enviar".
-// iOS y Android usan separadores distintos para el cuerpo del mensaje.
+// Abre la app de SMS con los números y el texto ya escritos. iOS y Android usan separadores distintos.
 function prepararAviso() {
   const a = document.getElementById('aviso');
   const nums = ficha.contacts.map(c => c.tel).join(',');
   const sep = /iPhone|iPad|iPod/.test(navigator.userAgent) ? '&' : '?';
   a.href = `sms:${nums}${sep}body=${encodeURIComponent(textoAviso())}`;
-  a.classList.remove('off');
-  a.textContent = '📍 Avisar a mis contactos por SMS';
-  document.getElementById('estado').textContent = pos
-    ? 'Ubicación lista. Toca el botón y luego "Enviar" en tu app de mensajes.'
-    : 'No se obtuvo la ubicación. El mensaje saldrá sin ella; toca el botón y luego "Enviar".';
+  a.classList.remove('pointer-events-none', 'opacity-60');
 }
 </script>
 </body>
